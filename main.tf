@@ -183,7 +183,7 @@ resource "aws_lb_target_group" "bastion_lb_target_group" {
 }
 
 resource "aws_lb_target_group" "bastion_lb_target_group_nexus" {
-  name        = "${local.name_prefix}-lb-target_nexus"
+  name        = "${local.name_prefix}-lb-target-nexus"
   port        = var.public_ssh_port_nexus
   protocol    = "TCP"
   vpc_id      = var.vpc_id
