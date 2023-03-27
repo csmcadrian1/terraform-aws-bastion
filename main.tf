@@ -53,6 +53,18 @@ resource "aws_security_group_rule" "ingress_bastion_nexus" {
   security_group_id = local.security_group
 }
 
+resource "aws_security_group_rule" "ingress_bastion_docker" {
+  count       = var.bastion_security_group_id == "" ? 1 : 0
+  description = "Incoming traffic to bastion"
+  type        = "ingress"
+  from_port   = var.public_ssh_port_docker
+  to_port     = var.public_ssh_port_docker
+  protocol    = "TCP"
+  cidr_blocks = ["0.0.0.0/0"]
+
+  security_group_id = local.security_group
+}
+
 resource "aws_security_group_rule" "egress_bastion" {
   count       = var.bastion_security_group_id == "" ? 1 : 0
   description = "Outgoing traffic from bastion to instances"
@@ -209,6 +221,21 @@ resource "aws_lb_target_group" "bastion_lb_target_group_nexus" {
   tags = merge(var.tags)
 }
 
+resource "aws_lb_target_group" "bastion_lb_target_group_docker" {
+  name        = "${local.name_prefix}-lb-target-docker"
+  port        = var.public_ssh_port_docker
+  protocol    = "TCP"
+  vpc_id      = var.vpc_id
+  target_type = "instance"
+
+  health_check {
+    port     = "traffic-port"
+    protocol = "TCP"
+  }
+
+  tags = merge(var.tags)
+}
+
 resource "aws_lb_listener" "bastion_lb_listener_22" {
   default_action {
     target_group_arn = aws_lb_target_group.bastion_lb_target_group.arn
@@ -228,6 +255,17 @@ resource "aws_lb_listener" "bastion_lb_listener_4444" {
 
   load_balancer_arn = aws_lb.bastion_lb.arn
   port              = var.public_ssh_port_nexus
+  protocol          = "TCP"
+}
+
+resource "aws_lb_listener" "bastion_lb_listener_4445" {
+  default_action {
+    target_group_arn = aws_lb_target_group.bastion_lb_target_group_docker.arn
+    type             = "forward"
+  }
+
+  load_balancer_arn = aws_lb.bastion_lb.arn
+  port              = var.public_ssh_port_docker
   protocol          = "TCP"
 }
 

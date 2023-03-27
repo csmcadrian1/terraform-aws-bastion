@@ -126,6 +126,11 @@ variable "public_ssh_port_nexus" {
   default     = 4444
 }
 
+variable "public_ssh_port_docker" {
+  description = "Set the SSH port to use from desktop to the bastion"
+  default     = 4445
+}
+
 variable "private_ssh_port" {
   description = "Set the SSH port to use between the bastion and private instance"
   default     = 22
