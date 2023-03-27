@@ -182,6 +182,21 @@ resource "aws_lb_target_group" "bastion_lb_target_group" {
   tags = merge(var.tags)
 }
 
+resource "aws_lb_target_group" "bastion_lb_target_group_nexus" {
+  name        = "${local.name_prefix}-lb-target_nexus"
+  port        = var.public_ssh_port_nexus
+  protocol    = "TCP"
+  vpc_id      = var.vpc_id
+  target_type = "instance"
+
+  health_check {
+    port     = "traffic-port"
+    protocol = "TCP"
+  }
+
+  tags = merge(var.tags)
+}
+
 resource "aws_lb_listener" "bastion_lb_listener_22" {
   default_action {
     target_group_arn = aws_lb_target_group.bastion_lb_target_group.arn
@@ -190,6 +205,17 @@ resource "aws_lb_listener" "bastion_lb_listener_22" {
 
   load_balancer_arn = aws_lb.bastion_lb.arn
   port              = var.public_ssh_port
+  protocol          = "TCP"
+}
+
+resource "aws_lb_listener" "bastion_lb_listener_22" {
+  default_action {
+    target_group_arn = aws_lb_target_group.bastion_lb_target_group_nexus.arn
+    type             = "forward"
+  }
+
+  load_balancer_arn = aws_lb.bastion_lb.arn
+  port              = var.public_ssh_port_nexus
   protocol          = "TCP"
 }
 
@@ -269,6 +295,7 @@ resource "aws_autoscaling_group" "bastion_auto_scaling_group" {
 
   target_group_arns = [
     aws_lb_target_group.bastion_lb_target_group.arn,
+    aws_lb_target_group.bastion_lb_target_group_nexus.arn
   ]
 
   termination_policies = [
