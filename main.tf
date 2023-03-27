@@ -41,6 +41,18 @@ resource "aws_security_group_rule" "ingress_bastion" {
   security_group_id = local.security_group
 }
 
+resource "aws_security_group_rule" "ingress_bastion" {
+  count       = var.bastion_security_group_id == "" ? 1 : 0
+  description = "Incoming traffic to bastion"
+  type        = "ingress"
+  from_port   = var.public_ssh_port_nexus
+  to_port     = var.public_ssh_port_nexus
+  protocol    = "TCP"
+  cidr_blocks = ["0.0.0.0/0"]
+
+  security_group_id = local.security_group
+}
+
 resource "aws_security_group_rule" "egress_bastion" {
   count       = var.bastion_security_group_id == "" ? 1 : 0
   description = "Outgoing traffic from bastion to instances"
