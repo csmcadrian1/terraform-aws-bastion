@@ -208,7 +208,7 @@ resource "aws_lb_listener" "bastion_lb_listener_22" {
   protocol          = "TCP"
 }
 
-resource "aws_lb_listener" "bastion_lb_listener_22" {
+resource "aws_lb_listener" "bastion_lb_listener_4444" {
   default_action {
     target_group_arn = aws_lb_target_group.bastion_lb_target_group_nexus.arn
     type             = "forward"
