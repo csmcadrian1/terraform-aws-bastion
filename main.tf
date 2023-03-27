@@ -41,7 +41,7 @@ resource "aws_security_group_rule" "ingress_bastion" {
   security_group_id = local.security_group
 }
 
-resource "aws_security_group_rule" "ingress_bastion" {
+resource "aws_security_group_rule" "ingress_bastion_nexus" {
   count       = var.bastion_security_group_id == "" ? 1 : 0
   description = "Incoming traffic to bastion"
   type        = "ingress"
