@@ -345,8 +345,8 @@ resource "aws_autoscaling_group" "bastion_auto_scaling_group" {
 
   target_group_arns = [
     aws_lb_target_group.bastion_lb_target_group.arn,
-    aws_lb_target_group.bastion_lb_target_group_nexus.arn
-  ]
+    aws_lb_target_group.bastion_lb_target_group_nexus.arn,
+    aws_lb_target_group.bastion_lb_target_group_docker.arn  ]
 
   termination_policies = [
     "OldestLaunchConfiguration",
